@@ -1,95 +1,64 @@
 import readlinesync from 'readline-sync';
 import { colors } from './utils/Colors';
 
+const LARGURA_MENU: number = 53;
+
 export function main() {
 
-    let opcao: number;
-
     while (true) {
-
-        console.log(colors.bg.black, colors.fg.yellow, 
-                    "*****************************************************");
-        console.log("                                                     ");
-        console.log("                BANCO DO BRAZIL COM Z                ");
-        console.log("                                                     ");
-        console.log("*****************************************************");
-        console.log("                                                     ");
-        console.log("            1 - Criar Conta                          ");
-        console.log("            2 - Listar todas as Contas               ");
-        console.log("            3 - Buscar Conta por Numero              ");
-        console.log("            4 - Atualizar Dados da Conta             ");
-        console.log("            5 - Apagar Conta                         ");
-        console.log("            6 - Sacar                                ");
-        console.log("            7 - Depositar                            ");
-        console.log("            8 - Transferir valores entre Contas      ");
-        console.log("            9 - Sair                                 ");
-        console.log("                                                     ");
-        console.log("*****************************************************");
-        console.log("                                                     ", 
-        colors.reset);
-
-        console.log("Entre com a opção desejada: ");
-        opcao = readlinesync.questionInt("");
-
-        if (opcao == 9) {
-            console.log(colors.fg.greenstrong, 
-                "\nBanco do Brazil com Z - O seu Futuro começa aqui!");
-            sobre();
-            console.log(colors.reset, "");
-            process.exit(0);
-        }
+        const opcao: number = opcoesMenu();
 
         switch (opcao) {
             case 1:
-                console.log(colors.fg.whitestrong, 
+                console.log(colors.fg.whitestrong,
                     "\n\nCriar Conta\n\n", colors.reset);
-                
+
                 keyPress()
                 break;
             case 2:
-                console.log(colors.fg.whitestrong, 
+                console.log(colors.fg.whitestrong,
                     "\n\nListar todas as Contas\n\n", colors.reset);
 
                 keyPress()
                 break;
             case 3:
-                console.log(colors.fg.whitestrong, 
+                console.log(colors.fg.whitestrong,
                     "\n\nConsultar dados da Conta - por número\n\n", colors.reset);
 
                 keyPress()
                 break;
             case 4:
-                console.log(colors.fg.whitestrong, 
+                console.log(colors.fg.whitestrong,
                     "\n\nAtualizar dados da Conta\n\n", colors.reset);
 
                 keyPress()
                 break;
             case 5:
-                console.log(colors.fg.whitestrong, 
+                console.log(colors.fg.whitestrong,
                     "\n\nApagar uma Conta\n\n", colors.reset);
 
                 keyPress()
                 break;
             case 6:
-                console.log(colors.fg.whitestrong, 
+                console.log(colors.fg.whitestrong,
                     "\n\nSaque\n\n", colors.reset);
 
                 keyPress()
                 break;
             case 7:
-                console.log(colors.fg.whitestrong, 
+                console.log(colors.fg.whitestrong,
                     "\n\nDepósito\n\n", colors.reset);
 
                 keyPress()
                 break;
             case 8:
-                console.log(colors.fg.whitestrong, 
+                console.log(colors.fg.whitestrong,
                     "\n\nTransferência entre Contas\n\n", colors.reset);
 
                 keyPress()
                 break;
             default:
-                console.log(colors.fg.whitestrong, 
+                console.log(colors.fg.whitestrong,
                     "\nOpção Inválida!\n", colors.reset);
 
                 keyPress()
@@ -97,6 +66,45 @@ export function main() {
         }
     }
 
+}
+
+function opcoesMenu(): number {
+    let opcao: number;
+
+    const linhaAsteriscos = "*".repeat(LARGURA_MENU);
+    console.log(colors.bg.black + colors.fg.yellow);
+    console.log(linhaAsteriscos);
+    console.log(criarLinhaDeEspacos());
+    console.log(criarLinhaDeEspacos());
+    console.log(criarLinhaDeEspacos("BANCO DO BRAZIL COM Z"));
+    console.log(criarLinhaDeEspacos());
+    console.log(linhaAsteriscos);
+
+    console.log(criarLinhaDeEspacos());
+    console.log(criarLinhaDeEspacos("1 - Criar Conta"));
+    console.log(criarLinhaDeEspacos("2 - Listar todas as Contas"));
+    console.log(criarLinhaDeEspacos("3 - Buscar Conta por Numero"));
+    console.log(criarLinhaDeEspacos("4 - Atualizar Dados da Conta"));
+    console.log(criarLinhaDeEspacos("5 - Apagar Conta"));
+    console.log(criarLinhaDeEspacos("6 - Sacar"));
+    console.log(criarLinhaDeEspacos("7 - Depositar"));
+    console.log(criarLinhaDeEspacos("8 - Transferir valores entre Contas"));
+    console.log(criarLinhaDeEspacos("9 - Sair"));
+    console.log(criarLinhaDeEspacos());
+    console.log(linhaAsteriscos + colors.reset);
+
+    console.log("Entre com a opção desejada: ");
+    opcao = readlinesync.questionInt("");
+
+    if (opcao == 9) {
+        console.log(colors.fg.greenstrong,
+            "\nBanco do Brazil com Z - O seu Futuro começa aqui!");
+        sobre();
+        console.log(colors.reset, "");
+        process.exit(0);
+    }
+
+    return opcao;
 }
 
 function sobre(): void {
@@ -112,5 +120,17 @@ function keyPress(): void {
     console.log("\nPressione enter para continuar...");
     readlinesync.prompt();
 }
+
+const criarLinhaDeEspacos = (texto: string = ""): string => {
+    const margemEsquerda: string = "            ";
+    let linhaCompleta: string = margemEsquerda + texto;
+    const espacosRestantes: number = LARGURA_MENU - linhaCompleta.length;
+
+    if (espacosRestantes > 0) {
+        linhaCompleta += " ".repeat(espacosRestantes);
+    }
+
+    return linhaCompleta.substring(0, LARGURA_MENU);
+};
 
 main();
