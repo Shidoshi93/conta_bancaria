@@ -1,7 +1,9 @@
-import readlinesync from 'readline-sync';
+import readlinesync, { question, questionFloat, questionInt } from 'readline-sync';
 import { colors } from './utils/Colors';
+import { Conta } from './model/Conta';
 
 const LARGURA_MENU: number = 53;
+const contas: Array<Conta> = new Array<Conta>;
 
 export function main() {
 
@@ -11,13 +13,23 @@ export function main() {
         switch (opcao) {
             case 1:
                 console.log(colors.fg.whitestrong,
-                    "\n\nCriar Conta\n\n", colors.reset);
+                    "\n\nCriar Conta\n", colors.reset);
 
-                keyPress()
+                const conta = criarConta();
+
+                console.log("Criando conta...");
+                contas.push(conta);
+                console.log("Conta criada com Sucesso!");
+
+                keyPress();
                 break;
             case 2:
                 console.log(colors.fg.whitestrong,
-                    "\n\nListar todas as Contas\n\n", colors.reset);
+                    "\n\nListar todas as Contas", colors.reset);
+
+                contas.map((item) => {
+                    item.visualizar();
+                });
 
                 keyPress()
                 break;
@@ -121,7 +133,7 @@ function keyPress(): void {
     readlinesync.prompt();
 }
 
-const criarLinhaDeEspacos = (texto: string = ""): string => {
+function criarLinhaDeEspacos(texto: string = ""): string {
     const margemEsquerda: string = "            ";
     let linhaCompleta: string = margemEsquerda + texto;
     const espacosRestantes: number = LARGURA_MENU - linhaCompleta.length;
@@ -132,5 +144,15 @@ const criarLinhaDeEspacos = (texto: string = ""): string => {
 
     return linhaCompleta.substring(0, LARGURA_MENU);
 };
+
+function criarConta(): Conta {
+    const numeroConta = questionInt("Digite o número da conta: ");
+    const numeroAgencia = questionInt("Digite o número da agência: ");
+    const tipoConta = questionInt("Digite o número da conta (1- Conta Corrente, 2- Conta Poupança): ");
+    const titular = question("Informe o titular da conta: ");
+    const saldo = questionFloat("Digite o saldo da conta: ");
+
+    return new Conta(numeroConta, numeroAgencia, tipoConta, titular, saldo);
+}
 
 main();
