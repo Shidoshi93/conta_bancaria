@@ -1,11 +1,27 @@
 import readlinesync, { question, questionFloat, questionInt } from 'readline-sync';
 import { colors } from './utils/Colors';
 import { Conta } from './model/Conta';
+import { ContaCorrente } from './model/ContaCorrente';
+import { ContaPoupanca } from './model/ContaPoupanca';
 
 const LARGURA_MENU: number = 53;
 const contas: Array<Conta> = new Array<Conta>;
 
 export function main() {
+
+    const contacorrente: ContaCorrente = new ContaCorrente(2, 123, 1, "Mariana", 15000, 1000);
+    contacorrente.visualizar();
+    contacorrente.sacar(2000);
+    contacorrente.visualizar();
+    contacorrente.depositar(1000);
+    contacorrente.visualizar();
+
+    const contapoupanca: ContaPoupanca = new ContaPoupanca(3, 123, 2, "Victor", 1000, 10);
+    contapoupanca.visualizar();
+    contapoupanca.sacar(200);
+    contapoupanca.visualizar();
+    contapoupanca.depositar(1000);
+    contapoupanca.visualizar();
 
     while (true) {
         const opcao: number = opcoesMenu();
