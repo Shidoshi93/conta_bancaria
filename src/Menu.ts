@@ -71,6 +71,11 @@ export function main() {
             case 6:
                 console.log(colors.fg.whitestrong,
                     "\n\nSaque\n\n", colors.reset);
+                
+                numero = readlinesync.questionInt("Digite o número da conta: ");
+                const valorSaque: number = readlinesync.questionFloat("Digite o valor do saque (R$): ");
+
+                contas.sacar(numero, valorSaque);
 
                 keyPress()
                 break;
@@ -78,11 +83,22 @@ export function main() {
                 console.log(colors.fg.whitestrong,
                     "\n\nDepósito\n\n", colors.reset);
 
+                numero = readlinesync.questionInt("Digite o número da conta: ");
+                const valorDeposito: number = readlinesync.questionFloat("Digite o valor do deposito (R$): ");
+
+                contas.depositar(numero, valorDeposito);
+
                 keyPress()
                 break;
             case 8:
                 console.log(colors.fg.whitestrong,
                     "\n\nTransferência entre Contas\n\n", colors.reset);
+
+                const numeroContaOrigem: number = readlinesync.questionInt("Digite o número da conta de origem: ");
+                const numeroContaDestino: number = readlinesync.questionInt("Digite o número da conta de destino: ");
+                const valorTransferencia: number = readlinesync.questionFloat("Digite o valor da transferência (R$): ");
+
+                contas.transferir(numeroContaOrigem,  numeroContaDestino, valorTransferencia);
 
                 keyPress()
                 break;
