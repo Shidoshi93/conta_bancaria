@@ -3,25 +3,16 @@ import { colors } from './utils/Colors';
 import { Conta } from './model/Conta';
 import { ContaCorrente } from './model/ContaCorrente';
 import { ContaPoupanca } from './model/ContaPoupanca';
+import { ValidadorString } from './utils/ValidadorStrings';
+import { ContaController } from './controller/ContaController';
 
 const LARGURA_MENU: number = 53;
-const contas: Array<Conta> = new Array<Conta>;
+const tiposContas = ["Conta Corrente", "Conta Poupança"];
+let contas: ContaController = new ContaController();
+let numero: number = 0;
+let conta: Conta | null;
 
 export function main() {
-
-    const contacorrente: ContaCorrente = new ContaCorrente(2, 123, 1, "Mariana", 15000, 1000);
-    contacorrente.visualizar();
-    contacorrente.sacar(2000);
-    contacorrente.visualizar();
-    contacorrente.depositar(1000);
-    contacorrente.visualizar();
-
-    const contapoupanca: ContaPoupanca = new ContaPoupanca(3, 123, 2, "Victor", 1000, 10);
-    contapoupanca.visualizar();
-    contapoupanca.sacar(200);
-    contapoupanca.visualizar();
-    contapoupanca.depositar(1000);
-    contapoupanca.visualizar();
 
     while (true) {
         const opcao: number = opcoesMenu();
@@ -30,16 +21,16 @@ export function main() {
             case 1:
                 console.log(colors.fg.whitestrong,
                     "\n\nCriar Conta\n", colors.reset);
-                    
+
+                contas.cadastrar(criarOuAtualizar(false));
+
                 keyPress();
                 break;
             case 2:
                 console.log(colors.fg.whitestrong,
                     "\n\nListar todas as Contas", colors.reset);
 
-                contas.map((item) => {
-                    item.visualizar();
-                });
+                contas.listarTodas();
 
                 keyPress()
                 break;
@@ -47,17 +38,33 @@ export function main() {
                 console.log(colors.fg.whitestrong,
                     "\n\nConsultar dados da Conta - por número\n\n", colors.reset);
 
+                contas.procurarPorNumero(readlinesync.questionInt("Digite o número da conta: "));
+
                 keyPress()
                 break;
             case 4:
                 console.log(colors.fg.whitestrong,
                     "\n\nAtualizar dados da Conta\n\n", colors.reset);
 
+                numero = readlinesync.questionInt("Digite o número da conta: ");
+                conta = contas.buscaNoArray(numero)
+
+                conta ? contas.atualizar(criarOuAtualizar(true, conta.numero, conta.agencia)) :
+                    console.log(colors.fg.whitestrong,
+                        `\nA Conta número: ${numero} não foi encontrada!`, colors.reset);
+
                 keyPress()
                 break;
             case 5:
                 console.log(colors.fg.whitestrong,
                     "\n\nApagar uma Conta\n\n", colors.reset);
+
+                numero = readlinesync.questionInt("Digite o número da conta: ");
+                conta = contas.buscaNoArray(numero)
+
+                conta ? contas.deletar(numero) :
+                    console.log(colors.fg.whitestrong,
+                        `\nA Conta número: ${numero} não foi encontrada!`, colors.reset);
 
                 keyPress()
                 break;
@@ -154,5 +161,75 @@ function criarLinhaDeEspacos(texto: string = ""): string {
 
     return linhaCompleta.substring(0, LARGURA_MENU);
 };
+
+type ContaInput = {
+    tipoConta: number;
+    titular: string;
+    saldo: number;
+    limite: number | undefined;
+    diaAniversario: number | undefined;
+}
+
+function criarOuAtualizar(atualiza: boolean, numeroConta?: number, numeroAgecia?: number): Conta {
+    const conta: ContaInput = {
+        tipoConta: readlinesync.keyInSelect(tiposContas, "", { cancel: false }) + 1,
+        titular: "",
+        saldo: readlinesync.questionFloat("Digite o saldo da conta: "),
+        limite: undefined,
+        diaAniversario: undefined,
+    }
+
+    conta.titular = validarTitular(conta.titular);
+
+    const numeroContaFinal: number = (atualiza && typeof numeroConta === "number") ? numeroConta : 
+        contas.gerarNumero();
+    const numeroAgenciaFinal: number = (atualiza && typeof numeroAgecia === "number") ? numeroAgecia : 
+        contas.gerarNumero();
+
+    if (conta.tipoConta === 1) {
+        conta.limite = readlinesync.questionInt("Digite o limite da conta (R$): ")
+        return new ContaCorrente(
+            numeroContaFinal,
+            numeroAgenciaFinal,
+            conta.tipoConta,
+            conta.titular,
+            conta.saldo,
+            conta.limite
+        )
+    }
+
+    conta.diaAniversario = readlinesync.questionInt("Digite o dia do aniversário da conta Poupança: ")
+
+    return new ContaPoupanca(
+        numeroContaFinal,
+        numeroAgenciaFinal,
+        conta.tipoConta,
+        conta.titular,
+        conta.saldo,
+        conta.diaAniversario
+    );
+}
+
+function validarTitular(titular: string): string {
+    let tentativas: number = 0;
+    let maxTentativas: number = 3;
+
+    while (tentativas < maxTentativas) {
+        titular = readlinesync.question("Digite o Titular da conta: ");
+
+        if (!ValidadorString.stringEhVaziaOuTemESpacosVazios(titular)) {
+            break;
+        }
+
+        console.warn(`Titular inválido. Tentativas restantes: ${maxTentativas - (tentativas + 1)}`);
+        tentativas++;
+    }
+
+
+    if (titular.length === 0) ValidadorString.dispararErrorStringVazia("Titular");
+
+
+    return titular;
+}
 
 main();
